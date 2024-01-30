@@ -1,17 +1,17 @@
-# TypeScript Express Series-01
+# TypeScript Express Series #01: Getting Started
 
-Express is a framework for Node.js used to build the backend for web applications. It is unopinionated, meaning that you can use it in a manner in which you see fit. In this tutorial, I present a way that works for me while working with TypeScript Express.
+Welcome to the TypeScript Express Series-01 repository, where we kick off our journey into building web applications with TypeScript and Express. In this series, we'll cover essential concepts, practical examples, and lay the foundation for more advanced topics in future series.
 
-## Starting up the project
+## Setting Up Your TypeScript Express Project
 
-To get started, we need to install necessary packages first using NPM.
+To get started, let's set up our TypeScript Express project. Ensure you have Node.js installed, and then run the following commands:
 
 ```bash
 npm init
-npm install typescript express ts-node
+npm install typescript express ts-node @types/node
 ```
 
-We start with an elementary `tsconfig.json` file:
+This installs the necessary packages, including TypeScript and Express. Now, create a tsconfig.json file with the following compiler options:
 
 ```json
 {
@@ -30,18 +30,18 @@ We start with an elementary `tsconfig.json` file:
 }
 ```
 
-To run our project, we need to add a script in our `package.json`:
-
+Add a script in your package.json to run the project using ts-node:
 ```json
 "scripts": {
   "dev": "ts-node ./src/server.ts"
 }
 ```
 
-As you can see, our app starts at the `server.ts` file in the `src` directory. Let’s start with the basics:
+# Creating a Simple Express Server
+
+Now, let's create a basic Express server. In your `src/examples/expressServerExample.ts` file:
 
 ```typescript
-// src/server.ts
 import * as express from 'express';
 
 const app = express();
@@ -50,19 +50,24 @@ app.get('/', (request, response) => {
   response.send('Hello world!');
 });
 
-app.listen(5000);
+app.listen(5000, () => {
+  console.log('Server is listening on port 5000');
+});
 ```
 
-The `express()` function creates the Express application that we are going to interact with.
+# Run your project with:
 
-### Middleware
+```bash
+npm run dev
+```
 
-Middleware functions have access to the request and response objects. It can attach to any place in the request-response cycle. A third argument that middleware receives is the `next` function. When called, the next middleware in the chain is executed. An example of a middleware is the `get` callback that handles the HTTP GET request that we’ve written above.
+Visit [http://localhost:5000](http://localhost:5000) to see your "Hello world!" message.
 
-Let’s create a very simple logger middleware that will log to console what requests were made.
+# Middleware in TypeScript Express
+
+Middleware plays a crucial role in Express applications. Let's create a simple logger middleware in `src/examples/loggerMiddlewareExample.ts`:
 
 ```typescript
-// src/server.ts
 import * as express from 'express';
 
 function loggerMiddleware(request: express.Request, response: express.Response, next) {
@@ -70,135 +75,74 @@ function loggerMiddleware(request: express.Request, response: express.Response, 
   next();
 }
 
+export default loggerMiddleware;
+```
+
+### Use the middleware with complete file
+`src/examples/loggerMiddlewareExample.ts`:
+
+```typescript
+import * as express from 'express';
+import loggerMiddleware from './middleware/logger';
+
 const app = express();
 
 app.use(loggerMiddleware);
 
-app.get('/hello', (request, response) => {
+app.get('/', (request, response) => {
   response.send('Hello world!');
 });
 
-app.listen(5000);
+app.listen(5000, () => {
+  console.log('Server is listening on port 5000');
+});
 ```
 
-In this example, as soon as someone sends the GET request to the `/hello` path, “GET /hello” will be printed in the console in which the app runs.
+# Routing in TypeScript Express
 
-Thanks to calling `next()`, the control of the request can be passed further. If you create a middleware that neither ends the request-response cycle (for example by sending a response) or calls the `next` function, the request will not finish with a valid response.
-
-There are a lot of ready-to-use middlewares that you can attach to your application, and you will have plenty of chances to see some of them in this course. A crucial one is the `body-parser`. It parses the body of the incoming request and makes it available under the `request.body` property. In this example, we use the `bodyParser.json` middleware that parses the JSON data.
-
-```bash
-npm install body-parser
-```
+Express supports routing to handle different HTTP methods and paths. Let's create a basic router in `src/examples/routerMiddlewareExample.ts` with a slight change in the file from example below:
 
 ```typescript
-// src/server.ts
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import loggerMiddleware from './middleware/logger';
+import helloRouter from './routes/hello';
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(loggerMiddleware);
+app.use('/hello', helloRouter);
 
-app.post('/', (request, response) => {
-  response.send(request.body);
+app.listen(5000, () => {
+  console.log('Server is listening on port 5000');
 });
-
-app.listen(5000);
 ```
 
-The body was sent back to us thanks to running `response.send(request.body)`. Without the body parser, the `request.body` property wouldn’t be accessible.
+Visit http://localhost:5000/hello to see the "Hello from the router!" message.
 
-As we go further, we explain more advanced concepts connected to the middleware.
 
-### Routing
+# Request and Response Objects
 
-The `app` object has a set of functions that attach callbacks to HTTP requests performed to specified paths, just like the examples above with `app.get` and `app.post`. You can also attach callbacks to other HTTP methods like POST, PUT, PATCH, and DELETE.
-
-Another way to set up routing is to use the `router` object. Once you create a router object you can call the methods like `get`, `put`, `patch`, and `delete` just like on the `app` object.
+Explore the `express.Request` and `express.Response` objects to handle incoming requests and send responses. Update your route in `src/examples/expressRequestExample.ts`:
 
 ```typescript
-// src/server.ts
+import * as express from 'express';
+
 const router = express.Router();
 
-router.get('/', (request, response) => {
-  response.send('Hello world!');
+router.get('/', (request: express.Request, response: express.Response) => {
+  response.send({
+    hostname: request.hostname,
+    path: request.path,
+    method: request.method,
+  });
 });
-```
-The only thing left that is required is to use the router.
 
-```typescript
-// src/server.ts
-app.use('/', router);
+export default router;
 ```
 
-As you can see by the usage of `app.use`, the `router` instance is just a middleware that you can attach to your application.
+Run your server and visit http://localhost:3000/ to see the JSON response.
 
-The addresses of the routes are a combination of paths provided for the `app.use` and the `router.METHOD`.
+This concludes the initial setup and exploration of TypeScript Express in Series #01. Stay tuned for more advanced topics in future series. Happy coding! 🚀
 
-```typescript
-router.get('/hello', (request, response) => {
-  response.send('Hello world!');
-});
- 
-app.use('/api', router);
-```
-
-The code above results in creating a route `/api/hello` that responds with text “Hello world!”.
-
-### Request
-
-The `request` object contains information about the HTTP request, such as headers, the request query string, and parameters.
-
-It inherits from `http.IncomingMessage.prototype` and therefore contains its fields and methods, aside from adding new ones.
-
-```typescript
-// Check if http.IncomingMessage.prototype is the prototype of the request object
-http.IncomingMessage.prototype.isPrototypeOf(request); // true
-```
-
-The code above results in creating a route `/api/hello` that responds with text “Hello world!”.
-
-### Request
-
-The `request` object contains information about the HTTP request, such as headers, the request query string, and parameters.
-
-It inherits from `http.IncomingMessage.prototype` and therefore contains its fields and methods, aside from adding new ones.
-
-```typescript
-// Check if http.IncomingMessage.prototype is the prototype of the request object
-http.IncomingMessage.prototype.isPrototypeOf(request); // true
-```
-
-We continue to go deeper into the `request` object as the course progresses.
-
-### Response
-
-The `response` object represents the HTTP response that the application sends when receiving an HTTP request.
-
-It inherits from `http.ServerResponse.prototype`: `http.ServerResponse.prototype.isPrototypeOf(response); // true`
-
-Its the most important method is called `send`. It sends the HTTP response so that the client can receive it. The function accepts different types of data: strings, objects (Array included), or Buffers. `send` ends the response process with data, but you can also end it without any data using the `end` function.
-
-The same as with the `request`, we dive more into the `response` object as we go.
-
-### Controllers
-
-A common way of structuring an Express application is called Model-View-Controller (MVC). Some of the key components of MVC are controllers. They contain the logic of the application and deal with handling client requests. Since this course covers TypeScript Express, we use classes. For the sake of readable code, I also create a class for the app instance itself.
-
-```typescript
-// src/server.ts
-import App from './app';
-import PostsController from './posts/posts.controller';
-
-const app = new App(
-  [
-    new PostsController(),
-  ],
-  5000,
-);
-
-app.listen();
-```
 
 
