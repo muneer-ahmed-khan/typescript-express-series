@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es2017",
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "moduleResolution": "Node16",
+    "module": "Node16",
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*.ts", "main.ts"],
+  "exclude": ["node_modules"]
+}
