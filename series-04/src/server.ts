@@ -6,6 +6,6 @@ import validateEnv from "./utils/validateEnv";
 
 validateEnv();
 
-const app = new App([new PostsController(), new AuthenticationController()]);
+const app = new App([new AuthenticationController(), new PostsController()]);
 
 app.listen();
