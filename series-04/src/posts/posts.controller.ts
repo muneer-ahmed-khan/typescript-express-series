@@ -28,12 +28,7 @@ class PostsController implements Controller {
         this.modifyPost
       )
       .delete(`${this.path}/:id`, this.deletePost)
-      .post(
-        this.path,
-        authMiddleware,
-        validationMiddleware(CreatePostDto),
-        this.createPost
-      );
+      .post(this.path, validationMiddleware(CreatePostDto), this.createPost);
   }
 
   private getAllPosts = async (
@@ -94,7 +89,7 @@ class PostsController implements Controller {
     const id = request.params.id;
     const successResponse = await this.post.findByIdAndDelete(id);
     if (successResponse) {
-      response.send(200);
+      response.sendStatus(204);
     } else {
       next(new PostNotFoundException(id));
     }

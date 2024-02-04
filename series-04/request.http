@@ -18,15 +18,19 @@ Content-Type: application/json
     "password": "12345678"
 }
 
-
 ###
+POST http://localhost:3000/auth/logout HTTP/1.1
+
+
+### post
 GET http://localhost:3000/posts HTTP/1.1
 
 ###
-GET http://localhost:3000/posts/65b9e61605b7b15cb7be0cdd HTTP/1.1
+GET http://localhost:3000/posts/65bfe491abecdd37d06103c5 HTTP/1.1
 
 ###
 POST http://localhost:3000/posts HTTP/1.1
+Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJmZTA5ZDM3MGZmOGJlNmU0MWI3YzUiLCJpYXQiOjE3MDcwNzQ2MTgsImV4cCI6MTcwNzA3ODIxOH0.6YMfpMY7xJvsG68wqJOo4PZlyi0RtBSh2G6p-Cfm27Y; HttpOnly; Max-Age=3600
 Content-Type: application/json
 
 {
@@ -36,16 +40,18 @@ Content-Type: application/json
 }
 
 ###
-PATCH  http://localhost:3000/posts/65b9e61605b7b15cb7be0cdd HTTP/1.1
+PATCH  http://localhost:3000/posts/65bfe491abecdd37d06103c5 HTTP/1.1
+Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJmZTA5ZDM3MGZmOGJlNmU0MWI3YzUiLCJpYXQiOjE3MDcwNzQ2MTgsImV4cCI6MTcwNzA3ODIxOH0.6YMfpMY7xJvsG68wqJOo4PZlyi0RtBSh2G6p-Cfm27Y; HttpOnly; Max-Age=3600
 Content-Type: application/json
 
 {
-    "author": "Muneer Ahmed"
+    "content": "update post content"
 }
 
 
 ###
-DELETE http://localhost:3000/posts/65b9e61605b7b15cb7be0cdd HTTP/1.1
+DELETE http://localhost:3000/posts/65bfe491abecdd37d06103c5 HTTP/1.1
+Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJmZTA5ZDM3MGZmOGJlNmU0MWI3YzUiLCJpYXQiOjE3MDcwNzQ2MTgsImV4cCI6MTcwNzA3ODIxOH0.6YMfpMY7xJvsG68wqJOo4PZlyi0RtBSh2G6p-Cfm27Y; HttpOnly; Max-Age=3600
 
 
 
